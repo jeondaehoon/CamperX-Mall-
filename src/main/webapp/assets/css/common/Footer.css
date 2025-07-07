@@ -1,0 +1,74 @@
+footer {
+    width: 100%;
+    /* position: fixed; */ /* 푸터를 페이지 아래에 고정 제거 */
+    /* bottom: 0; */ /* 푸터를 페이지 맨 아래에 배치 제거 */
+    background-color: #ffffff;
+    text-align: center;
+    padding: 20px 0;
+}
+
+footer .footer-content {
+    display: flex;
+    width: 100%;
+    max-width: 1200px;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 38px; /* 양쪽에 패딩 추가 */
+}
+
+footer .footer-left p {
+    font-size: 10px; /* 원하는 폰트 크기로 설정 */
+}
+
+
+footer .footer-left {
+    display: flex;
+    align-items: center;
+}
+
+html, body {
+    width: 100%;
+    height: 100%;
+}
+
+.contents {
+    height: auto;
+    min-height: auto;
+    padding-bottom: 280px;
+    background-color: #ffffff;
+}
+
+.footer {
+    background-color: #ffffff;
+    height: 280px;
+    position: relative;
+    transform: translateY(-0%);
+}
+
+footer .footer-text {
+    font-size: 12px;
+    font-family: 'Yantramanav', sans-serif;
+    font-weight: 400;
+    text-align: right;
+    line-height: 1.5;
+    margin-left: auto; /* 왼쪽 여백을 자동으로 설정하여 오른쪽 끝으로 보냄 */
+    position: absolute; /* 절대 위치 사용 */
+    right: 38px; /* 오른쪽 끝에서 38px 간격 */
+}
+
+footer .social-icons {
+    display: flex;
+    justify-content: flex-start; /* 아이콘들이 왼쪽 정렬되도록 설정 */
+}
+
+footer .social-icon {
+    margin-right: 20px;
+}
+
+footer .social-icon img {
+    width: 16px;
+    height: 16px;
+}
+
+
+

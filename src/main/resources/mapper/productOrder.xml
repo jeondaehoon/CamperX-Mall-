@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.CamperX.productOrder.dao.productOrderDao">
+
+    <resultMap id="orderMap" type="VO.ProductOrderInfoVO">
+        <result column="ORD_CODE" property="ordCode"/>
+        <result column="PRD_CODE" property="prdCode"/>
+        <result column="USER_ID" property="userId"/>
+        <result column="BUY_QTY" property="buyQty"/>
+        <result column="ORDER_STATUS" property="orderStatus"/>
+        <result column="ORD_DATE" property="ordDate"/>
+        <result column="DELIVERT_COST" property="deliveryCost"/>
+        <result column="PRICE" property="price"/>
+        <result column="RECEIVER_LASTNAME" property="receiverLastname"/>
+        <result column="RECEIVER_FIRSTNAME" property="receiverFirstname"/>
+        <result column="ADDRESS" property="address"/>
+        <result column="BUILDING_DETAIL" property="buildingDetail"/>
+        <result column="STATE" property="state"/>
+        <result column="CITY" property="city"/>
+        <result column="DISTRICT" property="district"/>
+        <result column="PHONE" property="phone"/>
+        <result column="EMAIL" property="email"/>
+        <result column="PAYMENT_METHOD" property="paymentMethod"/>
+        <result column="ORDER_DATE" property="orderDate"/>
+    </resultMap>
+    <!-- SQL statements go here -->
+    <insert id="SaveOrder" parameterType="VO.ProductOrderInfoVO">
+        INSERT INTO ORDER_INFO (
+            ORD_CODE,
+            USER_ID,
+            BUY_QTY,
+            TOTAL_PRICE,
+            ORDER_STATUS,
+            RECEIVER_LASTNAME,
+            RECEIVER_FIRSTNAME,
+            ADDRESS,
+            BUILDING_DETAIL,
+            STATE,
+            CITY,
+            DISTRICT,
+            PHONE,
+            EMAIL,
+            PAYMENT_METHOD,
+            ORDER_DATE
+        ) VALUES (
+            ORDER_INFO_SEQ.NEXTVAL,
+            #{userId},
+            #{buyQty,jdbcType=NUMERIC},
+            #{price,jdbcType=NUMERIC},
+            #{orderStatus},
+            #{receiverLastname},
+            #{receiverFirstname},
+            #{address},
+            #{buildingDetail},
+            #{state},
+            #{city},
+            #{district},
+            #{phone},
+            #{email},
+            #{paymentMethod},
+            SYSDATE
+        )
+    </insert>
+
+</mapper>

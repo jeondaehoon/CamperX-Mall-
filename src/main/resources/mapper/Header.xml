@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.CamperX.Header.dao.headerDao">
+    
+    <!-- SQL statements go here -->
+
+    <!-- 상품 검색 -->
+    <select id="searchProducts" parameterType="string" resultType="map">
+        SELECT 
+            p.PRD_CODE,
+            p.PRD_NAME,
+            p.PRICE,
+            p.PRD_IMG,
+            v.VENDOR_NAME,
+            c.CATEGORY_NAME
+        FROM 
+            PRD_INFO p
+            LEFT JOIN VENDOR_INFO v ON p.VENDOR_CODE = v.VENDOR_CODE
+            LEFT JOIN CATEGORY_INFO c ON p.CATEGORY_CODE = c.CATEGORY_CODE
+        WHERE 
+            p.PRD_NAME LIKE '%' || #{searchText} || '%'
+            OR v.VENDOR_NAME LIKE '%' || #{searchText} || '%'
+            OR c.CATEGORY_NAME LIKE '%' || #{searchText} || '%'
+        ORDER BY 
+            p.PRD_NAME ASC
+    </select>
+
+</mapper>

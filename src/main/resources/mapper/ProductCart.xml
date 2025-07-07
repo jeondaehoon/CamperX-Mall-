@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.CamperX.productCart.dao.ProductCartDao">
+    <resultMap id="CartItemMap" type="VO.CartInfoVO">
+        <result column="CART_ID" property="cartId"/>
+        <result column="USER_ID" property="userId"/>
+        <result column="PRD_CODE" property="prdCode"/>
+        <result column="QUANTITY" property="quantity"/>
+        <result column="ADDED_DATE" property="addedDate"/>
+        <result column="PRD_NAME" property="prdName"/>
+        <result column="PRICE" property="price"/>
+        <result column="PRD_IMG" property="prdImg"/>
+        <result column="VENDOR_NAME" property="vendorName"/>
+    </resultMap>
+
+    <select id="getCartItems" resultMap="CartItemMap">
+        SELECT 
+            c.CART_ID,
+            c.USER_ID,
+            c.PRD_CODE,
+            c.QUANTITY,
+            c.ADDED_DATE,
+            p.PRD_NAME,
+            p.PRICE,
+            p.PRD_IMG,
+            v.VENDOR_NAME
+        FROM 
+            CART_INFO c
+            LEFT JOIN PRD_INFO p ON c.PRD_CODE = p.PRD_CODE
+            LEFT JOIN VENDOR_INFO v ON p.VENDOR_CODE = v.VENDOR_CODE
+        WHERE 
+            c.USER_ID = #{userId}
+        ORDER BY 
+            c.ADDED_DATE DESC
+    </select>
+
+    <select id="getCartCount" resultType="int">
+        SELECT COUNT(*)
+        FROM CART_INFO
+        WHERE USER_ID = #{userId}
+    </select>
+
+    <update id="updateCartQuantity" parameterType="map">
+        UPDATE CART_INFO 
+        SET QUANTITY = #{quantity}
+        WHERE CART_ID = #{cartId}
+    </update>
+
+    <delete id="removeFromCart" parameterType="string">
+        DELETE FROM CART_INFO 
+        WHERE CART_ID = #{cartId}
+    </delete>
+
+</mapper> 

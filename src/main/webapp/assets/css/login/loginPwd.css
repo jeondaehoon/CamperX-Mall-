@@ -1,0 +1,122 @@
+/* 페이지의 body와 html을 초기화하여 다른 요소에 영향을 주지 않도록 설정 */
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%; /* 전체 페이지 높이를 100%로 설정 */
+}
+
+/* 로고 컨테이너 중앙 정렬 */
+.logo-container {
+    display: flex;
+    justify-content: center;
+    padding: 40px 0;
+}
+
+.logo-container img {
+    height: 50px;
+    width: auto;
+}
+
+/* form-container 부모의 중앙 정렬 */
+.container-wrapper {
+    display: flex;
+    justify-content: center;  /* 수평 중앙 정렬 */
+    align-items: flex-start;  /* 상단에 배치 */
+    height: 100vh;            /* 화면 전체 높이를 채움 */
+}
+
+/* form-container 스타일 */
+.form-container {
+    width: 100%;              /* 부모 요소의 너비에 맞게 설정 */
+    max-width: 460px;         /* 최대 너비 460px로 설정 */
+    padding: 20px;            /* 내부 여백 설정 */
+    box-sizing: border-box;   /* 패딩을 포함한 전체 크기 계산 */
+    text-align: center;       /* 텍스트 중앙 정렬 */
+    position: relative;       /* 버튼을 form-container 안에서 절대 위치로 설정하려면 부모를 relative로 설정 */
+}
+
+/* 텍스트 중앙 정렬 */
+.center-text {
+    font-size: 24px;         /* 폰트 크기 설정 */
+    font-weight: bold;       /* 글자 두께 설정 */
+    margin-top: 0;           /* 상단 여백을 0으로 설정하여 너무 많이 떨어지지 않게 */
+    margin-bottom: 30px;
+}
+
+/* 비밀번호 컨테이너 */
+.password-container {
+    position: relative;
+    width: 100%;
+    max-width: 460px;
+    margin: 20px auto;
+}
+
+/* 비밀번호 토글 아이콘 */
+.password-toggle {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #666;
+    font-size: 16px;
+    transition: color 0.3s ease;
+}
+
+.password-toggle:hover {
+    color: #333;
+}
+
+/* 비밀번호 입력란 (패딩 조정) */
+.password-container .email-input {
+    padding-right: 45px; /* 아이콘 공간 확보 */
+}
+
+/* 이메일 입력란 */
+.email-input {
+    display: block;          /* 입력란을 블록 요소로 설정 */
+    margin: 20px auto;       /* 상하 여백 추가 및 수평 중앙 정렬 */
+    width: 100%;             /* 너비 100%로 설정 (부모 너비에 맞추기) */
+    max-width: 460px;        /* 최대 너비 460px로 설정 */
+    height: 56px;            /* 세로 크기 56px */
+    padding: 10px;           /* 내부 여백 설정 */
+    font-size: 16px;         /* 글자 크기 설정 */
+    border: 1px solid #ccc; /* 테두리 색상 설정 */
+    border-radius: 4px;      /* 모서리 둥글게 설정 */
+    box-sizing: border-box;  /* 패딩을 포함한 전체 크기 계산 */
+    margin-bottom: 30px;
+}
+
+/* 약관 텍스트 */
+.terms-text {
+    text-align: left;        /* 텍스트 왼쪽 정렬 */
+    font-size: 14px;         /* 폰트 크기 설정 */
+    color: #555;             /* 글자 색상 설정 */
+    margin: 0;               /* 여백 제거 */
+    line-height: 1.6;        /* 줄 간격 설정 */
+    margin-top: 20px;        /* 버튼과 간격을 두기 위해 여백 추가 */
+    margin-bottom: 30px;
+}
+
+/* '다음' 버튼 */
+.next-button {
+    width: 100%;             /* 버튼의 너비를 부모 너비에 맞추기 */
+    height: 100%;
+    max-width: 80px;        /* 버튼의 최대 너비를 460px로 설정 */
+    max-height: 60px;
+    padding: 12px 24px;      /* 버튼 내 여백 */
+    background-color: #000000;  /* 배경 색상 */
+    color: white;            /* 글자 색상 */
+    border: none;            /* 테두리 제거 */
+    font-size: 16px;         /* 글자 크기 */
+    border-radius: 24px;      /* 둥근 모서리 */
+    cursor: pointer;        /* 마우스 커서 변경 */
+    transition: background-color 0.3s ease;  /* 배경 색상 변경 효과 */
+    margin-top: 20px;        /* 약간의 간격을 두기 위해 설정 */
+    margin-left: 330px;
+
+}
+
+.next-button:hover {
+    background-color: #595757;  /* hover 시 배경 색상 변경 */
+}

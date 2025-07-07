@@ -1,0 +1,269 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.CamperX.productList.dao.ProductListDao">
+    <resultMap id="ProductMap" type="VO.PrdInfoVO">
+        <result column="PRD_CODE" property="prdCode"/>
+        <result column="PRD_NAME" property="prdName"/>
+        <result column="PRD_COLOR" property="prdColor"/>
+        <result column="PRICE" property="price"/>
+        <result column="PRD_IMG" property="prdImg"/>
+        <result column="VENDOR_NAME" property="vendorName"/>
+        <result column="CATEGORY_NAME" property="categoryName"/>
+        <result column="BUY_QTY" property="buyQty"/>
+        <result column="PAY_AMOUNT" property="payAmount"/>
+        <result column="CATEGORY" property="category"/>
+    </resultMap>
+
+    <!-- 카테고리별 서브카테고리 조회 -->
+    <select id="getSubCategories" parameterType="string" resultType="map">
+        SELECT DISTINCT 
+            c2.CATEGORY_CODE as categoryCode,
+            c2.CATEGORY_NAME as categoryName
+        FROM CATEGORY_INFO c2
+        <where>
+            <choose>
+                <when test="category == 'tent'">
+                    c2.CATEGORY_CODE LIKE 'C001%'
+                </when>
+                <when test="category == 'tarp'">
+                    c2.CATEGORY_CODE LIKE 'C002%'
+                </when>
+                <when test="category == 'table'">
+                    c2.CATEGORY_CODE LIKE 'C003%'
+                </when>
+                <when test="category == 'chair'">
+                    c2.CATEGORY_CODE LIKE 'C004%'
+                </when>
+                <when test="category == 'kitchen'">
+                    c2.CATEGORY_CODE LIKE 'C005%'
+                </when>
+                <when test="category == 'sleeping'">
+                    c2.CATEGORY_CODE LIKE 'C006%' OR c2.CATEGORY_CODE LIKE 'C007%'
+                </when>
+                <when test="category == 'lighting'">
+                    c2.CATEGORY_CODE LIKE 'C008%'
+                </when>
+                <when test="category == 'etc'">
+                    c2.CATEGORY_CODE LIKE 'C009%'
+                </when>
+            </choose>
+        </where>
+        ORDER BY c2.CATEGORY_CODE
+    </select>
+    
+    <!-- 카테고리별 브랜드 조회 -->
+    <select id="getBrands" parameterType="string" resultType="string">
+        SELECT DISTINCT v.VENDOR_NAME
+        FROM PRD_INFO p
+        JOIN VENDOR_INFO v ON p.VENDOR_CODE = v.VENDOR_CODE
+        WHERE 
+        <choose>
+            <when test="category == 'tent'">
+                p.CATEGORY_CODE IN ('C00101', 'C00102', 'C00103', 'C00104')
+            </when>
+            <when test="category == 'table'">
+                p.CATEGORY_CODE IN ('C00301', 'C00302', 'C00303', 'C00304', 'C00401', 'C00402', 'C00403', 'C00404')
+            </when>
+            <when test="category == 'kitchen'">
+                p.CATEGORY_CODE IN ('C00501', 'C00502', 'C00503', 'C00504', 'C00505', 'C00506')
+            </when>
+            <when test="category == 'sleeping'">
+                p.CATEGORY_CODE IN ('C00601', 'C00701', 'C00702')
+            </when>
+            <when test="category == 'lighting'">
+                p.CATEGORY_CODE IN ('C00801', 'C00802', 'C00803')
+            </when>
+            <when test="category == 'etc'">
+                p.CATEGORY_CODE IN ('C00901', 'C00902', 'C00903', 'C00904', 'C00905', 'C00906', 'C00907', 'C00908', 'C00909')
+            </when>
+            <otherwise>
+                p.CATEGORY_CODE IN ('C00101', 'C00102', 'C00103', 'C00104')
+            </otherwise>
+        </choose>
+        ORDER BY v.VENDOR_NAME
+    </select>
+    
+    <!-- 카테고리별 가격대 조회 -->
+    <select id="getPriceRanges" parameterType="string" resultType="map">
+        SELECT 
+            priceRange,
+            COUNT(*) as count
+        FROM (
+            SELECT 
+                CASE 
+                    WHEN p.PRICE &lt;= 50000 THEN '~50,000원'
+                    WHEN p.PRICE &lt;= 100000 THEN '50,000원~100,000원'
+                    WHEN p.PRICE &lt;= 200000 THEN '100,000원~200,000원'
+                    ELSE '200,000원 이상'
+                END as priceRange
+            FROM PRD_INFO p
+            WHERE 
+            <choose>
+                <when test="category == 'tent'">
+                    p.CATEGORY_CODE IN ('C00101', 'C00102', 'C00103', 'C00104')
+                </when>
+                <when test="category == 'table'">
+                    p.CATEGORY_CODE IN ('C00301', 'C00302', 'C00303', 'C00304', 'C00401', 'C00402', 'C00403', 'C00404')
+                </when>
+                <when test="category == 'kitchen'">
+                    p.CATEGORY_CODE IN ('C00501', 'C00502', 'C00503', 'C00504', 'C00505', 'C00506')
+                </when>
+                <when test="category == 'sleeping'">
+                    p.CATEGORY_CODE IN ('C00601', 'C00701', 'C00702')
+                </when>
+                <when test="category == 'lighting'">
+                    p.CATEGORY_CODE IN ('C00801', 'C00802', 'C00803')
+                </when>
+                <when test="category == 'etc'">
+                    p.CATEGORY_CODE IN ('C00901', 'C00902', 'C00903', 'C00904', 'C00905', 'C00906', 'C00907', 'C00908', 'C00909')
+                </when>
+                <otherwise>
+                    p.CATEGORY_CODE IN ('C00101', 'C00102', 'C00103', 'C00104')
+                </otherwise>
+            </choose>
+        )
+        GROUP BY priceRange
+        ORDER BY 
+            CASE priceRange
+                WHEN '~50,000원' THEN 1
+                WHEN '50,000원~100,000원' THEN 2
+                WHEN '100,000원~200,000원' THEN 3
+                ELSE 4
+            END
+    </select>
+    
+    <!-- 카테고리별 색상 조회 -->
+    <select id="getColors" parameterType="string" resultType="map">
+        SELECT DISTINCT p.PRD_COLOR as color
+        FROM PRD_INFO p
+        WHERE 
+        <choose>
+            <when test="category == 'tent'">
+                p.CATEGORY_CODE IN ('C00101', 'C00102', 'C00103', 'C00104')
+            </when>
+            <when test="category == 'table'">
+                p.CATEGORY_CODE IN ('C00301', 'C00302', 'C00303', 'C00304', 'C00401', 'C00402', 'C00403', 'C00404')
+            </when>
+            <when test="category == 'kitchen'">
+                p.CATEGORY_CODE IN ('C00501', 'C00502', 'C00503', 'C00504', 'C00505', 'C00506')
+            </when>
+            <when test="category == 'sleeping'">
+                p.CATEGORY_CODE IN ('C00601', 'C00701', 'C00702')
+            </when>
+            <when test="category == 'lighting'">
+                p.CATEGORY_CODE IN ('C00801', 'C00802', 'C00803')
+            </when>
+            <when test="category == 'etc'">
+                p.CATEGORY_CODE IN ('C00901', 'C00902', 'C00903', 'C00904', 'C00905', 'C00906', 'C00907', 'C00908', 'C00909')
+            </when>
+            <otherwise>
+                p.CATEGORY_CODE IN ('C00101', 'C00102', 'C00103', 'C00104')
+            </otherwise>
+        </choose>
+        ORDER BY p.PRD_COLOR
+    </select>
+    
+    <!-- 카테고리별 상품 목록 조회 -->
+    <select id="getProducts" parameterType="map" resultType="map">
+        SELECT 
+            p.PRD_CODE,
+            p.PRD_NAME,
+            p.PRD_COLOR,
+            p.PRICE,
+            p.PRD_IMG,
+            c2.CATEGORY_NAME,
+            v.VENDOR_NAME
+        FROM PRD_INFO p
+        JOIN CATEGORY_INFO c2 ON p.CATEGORY_CODE = c2.CATEGORY_CODE
+        JOIN VENDOR_INFO v ON p.VENDOR_CODE = v.VENDOR_CODE
+        <where>
+            <if test="category != null and category != ''">
+                AND
+                <choose>
+                    <when test="category == 'tent_all'">
+                        (p.CATEGORY_CODE LIKE 'C001%' OR p.CATEGORY_CODE LIKE 'C002%')
+                    </when>
+                    <when test="category == 'tent'">
+                        p.CATEGORY_CODE LIKE 'C001%'
+                    </when>
+                    <when test="category == 'tarp'">
+                        p.CATEGORY_CODE LIKE 'C002%'
+                    </when>
+                    <when test="category == 'table_all'">
+                        (p.CATEGORY_CODE LIKE 'C003%' OR p.CATEGORY_CODE LIKE 'C004%')
+                    </when>
+                    <when test="category == 'table'">
+                        p.CATEGORY_CODE LIKE 'C003%'
+                    </when>
+                    <when test="category == 'chair'">
+                        p.CATEGORY_CODE LIKE 'C004%'
+                    </when>
+                    <when test="category == 'kitchen'">
+                        p.CATEGORY_CODE LIKE 'C005%'
+                    </when>
+                    <when test="category == 'sleeping'">
+                        (p.CATEGORY_CODE LIKE 'C006%' OR p.CATEGORY_CODE LIKE 'C007%')
+                    </when>
+                    <when test="category == 'lighting'">
+                        p.CATEGORY_CODE LIKE 'C008%'
+                    </when>
+                    <when test="category == 'etc'">
+                        p.CATEGORY_CODE LIKE 'C009%'
+                    </when>
+                    <when test="category.length() == 6 and category.startsWith('C')">
+                        p.CATEGORY_CODE = #{category}
+                    </when>
+                </choose>
+            </if>
+            <if test="brands != null and !brands.isEmpty()">
+                AND v.VENDOR_NAME IN
+                <foreach collection="brands" item="brand" open="(" separator="," close=")">
+                    #{brand}
+                </foreach>
+            </if>
+            <if test="colors != null and !colors.isEmpty()">
+                AND p.PRD_COLOR IN
+                <foreach collection="colors" item="color" open="(" separator="," close=")">
+                    #{color}
+                </foreach>
+            </if>
+            <if test="prices != null and !prices.isEmpty()">
+                AND
+                <foreach collection="prices" item="price" open="(" separator=" OR " close=")">
+                    <choose>
+                        <when test="price == '0-50000'">
+                            p.PRICE &lt;= 50000
+                        </when>
+                        <when test="price == '50000-100000'">
+                            p.PRICE > 50000 AND p.PRICE &lt;= 100000
+                        </when>
+                        <when test="price == '100000-200000'">
+                            p.PRICE > 100000 AND p.PRICE &lt;= 200000
+                        </when>
+                        <when test="price == '200000'">
+                            p.PRICE > 200000
+                        </when>
+                    </choose>
+                </foreach>
+            </if>
+        </where>
+        <choose>
+            <when test="sort == 'newest'">
+                ORDER BY p.REG_DATE DESC
+            </when>
+            <when test="sort == 'priceAsc'">
+                ORDER BY p.PRICE ASC
+            </when>
+            <when test="sort == 'priceDesc'">
+                ORDER BY p.PRICE DESC
+            </when>
+            <otherwise>
+                ORDER BY p.PRD_NAME
+            </otherwise>
+        </choose>
+    </select>
+    
+</mapper>

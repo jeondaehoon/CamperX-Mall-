@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.CamperX.Mainpage.dao.MainpageDao">
+    <resultMap id="MainpageMap" type="VO.ReviewInfoVO">
+        <result column="REVIEW_ID" property="reviewId"/>
+        <result column="PRD_CODE" property="prdCode"/>
+        <result column="USER_ID" property="userId"/>
+        <result column="RATING" property="rating"/>
+        <result column="CONTENT" property="content"/>
+        <result column="CREATED_AT" property="createdAt"/>
+        <result column="PRD_IMG" property="prdImg"/>
+    </resultMap>
+
+    <resultMap id="prdInfoMap" type="VO.PrdInfoVO">
+        <result column="PRD_CODE" property="prdCode"/>
+        <result column="PRD_NAME" property="prdName"/>
+        <result column="PRD_COLOR" property="prdColor"/>
+        <result column="PRICE" property="price"/>
+        <result column="PRD_IMG" property="prdImg"/>
+        <result column="VENDOR_NAME" property="vendorName"/>
+        <result column="CATEGORY_NAME" property="categoryName"/>
+        <result column="BUY_QTY" property="buyQty"/>
+        <result column="PAY_AMOUNT" property="payAmount"/>
+        <result column="CATEGORY" property="category"/>
+    </resultMap>
+    
+    <select id="getTop3tent" resultMap="MainpageMap">
+            SELECT a.REVIEW_ID,
+                   a.PRD_CODE,
+                   a.USER_ID,
+                   a.RATING,
+                   a.CONTENT,
+                   a.CREATED_AT,
+                   b.PRD_IMG
+            FROM REVIEW_INFO a
+                     JOIN PRD_INFO b ON a.PRD_CODE = b.PRD_CODE
+            WHERE 1 = 1
+            ORDER BY a.RATING DESC, a.CREATED_AT DESC
+                FETCH FIRST 3 ROWS ONLY
+        </select>
+        
+
+    <select id="selectAllTop5Products" resultMap="prdInfoMap">
+        SELECT 
+            p.PRD_CODE,
+            p.PRD_NAME,
+            p.PRD_COLOR,
+            p.PRICE,
+            p.PRD_IMG,
+            c2.CATEGORY_NAME,
+            v.VENDOR_NAME,
+            COALESCE(SUM(b.BUY_QTY), 0) as BUY_QTY,
+            COALESCE(SUM(b.PAY_AMOUNT), 0) as PAY_AMOUNT,
+            'ALL' as CATEGORY
+        FROM PRD_INFO p
+        LEFT JOIN BUY_PRD b ON p.PRD_CODE = b.PRD_CODE
+        JOIN CATEGORY_INFO c2 ON p.CATEGORY_CODE = c2.CATEGORY_CODE
+        JOIN VENDOR_INFO v ON p.VENDOR_CODE = v.VENDOR_CODE
+        GROUP BY p.PRD_CODE, p.PRD_NAME, p.PRD_COLOR, p.PRICE, p.PRD_IMG, c2.CATEGORY_NAME, v.VENDOR_NAME
+        ORDER BY BUY_QTY DESC, p.PRD_CODE
+        FETCH FIRST 5 ROWS ONLY
+    </select>
+
+    <!-- 텐트 베스트 5 -->
+    <select id="selectTentTop5Products" resultMap="prdInfoMap">
+        SELECT 
+            p.PRD_CODE,
+            p.PRD_NAME,
+            p.PRD_COLOR,
+            p.PRICE,
+            p.PRD_IMG,
+            c2.CATEGORY_NAME,
+            v.VENDOR_NAME,
+            COALESCE(SUM(b.BUY_QTY), 0) as BUY_QTY,
+            COALESCE(SUM(b.PAY_AMOUNT), 0) as PAY_AMOUNT,
+            '텐트' as CATEGORY
+        FROM PRD_INFO p
+        LEFT JOIN BUY_PRD b ON p.PRD_CODE = b.PRD_CODE
+        JOIN CATEGORY_INFO c2 ON p.CATEGORY_CODE = c2.CATEGORY_CODE
+        JOIN VENDOR_INFO v ON p.VENDOR_CODE = v.VENDOR_CODE
+        WHERE p.CATEGORY_CODE IN ('C00101', 'C00102', 'C00103', 'C00104')
+        GROUP BY p.PRD_CODE, p.PRD_NAME, p.PRD_COLOR, p.PRICE, p.PRD_IMG, c2.CATEGORY_NAME, v.VENDOR_NAME
+        ORDER BY BUY_QTY DESC, p.PRD_CODE
+        FETCH FIRST 5 ROWS ONLY
+    </select>
+
+    <!-- 타프 베스트 5 -->
+    <select id="selectTarpTop5Products" resultMap="prdInfoMap">
+        SELECT 
+            p.PRD_CODE,
+            p.PRD_NAME,
+            p.PRD_COLOR,
+            p.PRICE,
+            p.PRD_IMG,
+            c2.CATEGORY_NAME,
+            v.VENDOR_NAME,
+            COALESCE(SUM(b.BUY_QTY), 0) as BUY_QTY,
+            COALESCE(SUM(b.PAY_AMOUNT), 0) as PAY_AMOUNT,
+            '타프' as CATEGORY
+        FROM PRD_INFO p
+        LEFT JOIN BUY_PRD b ON p.PRD_CODE = b.PRD_CODE
+        JOIN CATEGORY_INFO c2 ON p.CATEGORY_CODE = c2.CATEGORY_CODE
+        JOIN VENDOR_INFO v ON p.VENDOR_CODE = v.VENDOR_CODE
+        WHERE p.CATEGORY_CODE IN ('C00201', 'C00202', 'C00203', 'C00204', 'C00205')
+        GROUP BY p.PRD_CODE, p.PRD_NAME, p.PRD_COLOR, p.PRICE, p.PRD_IMG, c2.CATEGORY_NAME, v.VENDOR_NAME
+        ORDER BY BUY_QTY DESC, p.PRD_CODE
+        FETCH FIRST 5 ROWS ONLY
+    </select>
+
+    <!-- 의자 베스트 5 -->
+    <select id="selectChairTop5Products" resultMap="prdInfoMap">
+        SELECT 
+            p.PRD_CODE,
+            p.PRD_NAME,
+            p.PRD_COLOR,
+            p.PRICE,
+            p.PRD_IMG,
+            c2.CATEGORY_NAME,
+            v.VENDOR_NAME,
+            COALESCE(SUM(b.BUY_QTY), 0) as BUY_QTY,
+            COALESCE(SUM(b.PAY_AMOUNT), 0) as PAY_AMOUNT,
+            '의자' as CATEGORY
+        FROM PRD_INFO p
+        LEFT JOIN BUY_PRD b ON p.PRD_CODE = b.PRD_CODE
+        JOIN CATEGORY_INFO c2 ON p.CATEGORY_CODE = c2.CATEGORY_CODE
+        JOIN VENDOR_INFO v ON p.VENDOR_CODE = v.VENDOR_CODE
+        WHERE p.CATEGORY_CODE IN ('C00301', 'C00302', 'C00303', 'C00304')
+        GROUP BY p.PRD_CODE, p.PRD_NAME, p.PRD_COLOR, p.PRICE, p.PRD_IMG, c2.CATEGORY_NAME, v.VENDOR_NAME
+        ORDER BY BUY_QTY DESC, p.PRD_CODE
+        FETCH FIRST 5 ROWS ONLY
+    </select>
+
+    <!-- 테이블 베스트 5 -->
+    <select id="selectTableTop5Products" resultMap="prdInfoMap">
+        SELECT 
+            p.PRD_CODE,
+            p.PRD_NAME,
+            p.PRD_COLOR,
+            p.PRICE,
+            p.PRD_IMG,
+            c2.CATEGORY_NAME,
+            v.VENDOR_NAME,
+            COALESCE(SUM(b.BUY_QTY), 0) as BUY_QTY,
+            COALESCE(SUM(b.PAY_AMOUNT), 0) as PAY_AMOUNT,
+            '테이블' as CATEGORY
+        FROM PRD_INFO p
+        LEFT JOIN BUY_PRD b ON p.PRD_CODE = b.PRD_CODE
+        JOIN CATEGORY_INFO c2 ON p.CATEGORY_CODE = c2.CATEGORY_CODE
+        JOIN VENDOR_INFO v ON p.VENDOR_CODE = v.VENDOR_CODE
+        WHERE p.CATEGORY_CODE IN ('C00401', 'C00402', 'C00403', 'C00404')
+        GROUP BY p.PRD_CODE, p.PRD_NAME, p.PRD_COLOR, p.PRICE, p.PRD_IMG, c2.CATEGORY_NAME, v.VENDOR_NAME
+        ORDER BY BUY_QTY DESC, p.PRD_CODE
+        FETCH FIRST 5 ROWS ONLY
+    </select>
+
+    <!-- 기타 베스트 5 -->
+    <select id="selectEtcTop5Products" resultMap="prdInfoMap">
+        SELECT 
+            p.PRD_CODE,
+            p.PRD_NAME,
+            p.PRD_COLOR,
+            p.PRICE,
+            p.PRD_IMG,
+            c2.CATEGORY_NAME,
+            v.VENDOR_NAME,
+            COALESCE(SUM(b.BUY_QTY), 0) as BUY_QTY,
+            COALESCE(SUM(b.PAY_AMOUNT), 0) as PAY_AMOUNT,
+            '기타' as CATEGORY
+        FROM PRD_INFO p
+        LEFT JOIN BUY_PRD b ON p.PRD_CODE = b.PRD_CODE
+        JOIN CATEGORY_INFO c2 ON p.CATEGORY_CODE = c2.CATEGORY_CODE
+        JOIN VENDOR_INFO v ON p.VENDOR_CODE = v.VENDOR_CODE
+        WHERE p.CATEGORY_CODE IN ('C00501', 'C00502', 'C00503', 'C00504', 'C00505', 'C00506',
+                                'C00601',
+                                'C00701', 'C00702',
+                                'C00801', 'C00802', 'C00803',
+                                'C00901', 'C00902', 'C00903', 'C00904', 'C00905', 'C00906', 'C00907', 'C00908', 'C00909')
+        GROUP BY p.PRD_CODE, p.PRD_NAME, p.PRD_COLOR, p.PRICE, p.PRD_IMG, c2.CATEGORY_NAME, v.VENDOR_NAME
+        ORDER BY BUY_QTY DESC, p.PRD_CODE
+        FETCH FIRST 5 ROWS ONLY
+    </select>
+</mapper>

@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.CamperX.productView.dao.ProductViewDao">
+    <resultMap id="ProductMap" type="VO.PrdInfoVO">
+        <result column="PRD_CODE" property="prdCode"/>
+        <result column="PRD_NAME" property="prdName"/>
+        <result column="PRD_COLOR" property="prdColor"/>
+        <result column="PRICE" property="price"/>
+        <result column="PRD_IMG" property="prdImg"/>
+        <result column="VENDOR_NAME" property="vendorName"/>
+        <result column="CATEGORY_NAME" property="categoryName"/>
+        <result column="BUY_QTY" property="buyQty"/>
+        <result column="PAY_AMOUNT" property="payAmount"/>
+        <result column="CATEGORY" property="category"/>
+    </resultMap>
+
+    <resultMap id="ProductInfoMap" type="VO.PrdInfoVO">
+        <result column="PRD_CODE" property="prdCode"/>
+        <result column="PRD_NAME" property="prdName"/>
+        <result column="PRD_COLOR" property="prdColor"/>
+        <result column="PRICE" property="price"/>
+        <result column="PRD_IMG" property="prdImg"/>
+        <result column="PRD_DESC" property="prdDesc"/>
+        <result column="VENDOR_NAME" property="vendorName"/>
+        <result column="SHIPPING" property="shipping"/>
+    </resultMap>
+
+    <resultMap id="ProductImageMap" type="VO.PrdImageVO">
+        <result column="PRD_IMG" property="prdImg"/>
+        <result column="IMG_TYPE" property="imgType"/>
+    </resultMap>
+
+    <resultMap id="ProductFeatureMap" type="VO.FeatureVO">
+        <result column="FEATURE_TITLE" property="title"/>
+        <result column="FEATURE_CONTENTS" property="description"/>
+    </resultMap>
+
+    <!-- SQL statements go here -->
+    <select id="getProductDetailSearch" resultMap="ProductMap">
+        SELECT
+            p.PRD_CODE,
+            p.PRD_NAME,
+            p.PRD_DESC,
+            p.PRICE,
+            p.PRD_COLOR,
+            p.PRD_IMG,
+            v.VENDOR_NAME,
+            c.CATEGORY_NAME
+        FROM
+            PRD_INFO p
+            LEFT JOIN VENDOR_INFO v ON p.VENDOR_CODE = v.VENDOR_CODE
+            LEFT JOIN CATEGORY_INFO c ON p.CATEGORY_CODE = c.CATEGORY_CODE
+        WHERE
+            p.PRD_CODE = #{prdCode}
+    </select>
+
+    <select id="getProductInfo" resultMap="ProductInfoMap" parameterType="java.lang.String">
+        SELECT
+            p.PRD_CODE,
+            p.PRD_NAME,
+            p.PRD_DESC,
+            p.PRICE,
+            p.PRD_COLOR,
+            p.PRD_IMG,
+            v.VENDOR_NAME,
+            c.SHIPPING
+        FROM
+            PRD_INFO p
+                LEFT JOIN VENDOR_INFO v ON p.VENDOR_CODE = v.VENDOR_CODE
+                LEFT JOIN CATEGORY_INFO c ON p.CATEGORY_CODE = c.CATEGORY_CODE
+        WHERE
+            p.PRD_CODE = #{prdCode}
+    </select>
+
+    <select id="getProductImages" resultMap="ProductImageMap" parameterType="java.lang.String">
+        SELECT p.PRD_IMG as prdImg, 'main' as imgType
+        FROM PRD_INFO p
+        WHERE p.PRD_CODE = #{prdCode}
+        AND p.PRD_IMG IS NOT NULL
+        AND p.PRD_IMG != ''
+        UNION ALL
+        SELECT p.PRD_IMG as prdImg, 'detail' as imgType
+        FROM PRD_INFO p
+        WHERE p.PRD_CODE = #{prdCode}
+        AND p.PRD_IMG IS NOT NULL
+        AND p.PRD_IMG != ''
+        AND ROWNUM = 1
+    </select>
+
+    <select id="getProductFeatures" resultMap="ProductFeatureMap" parameterType="java.lang.String">
+        SELECT
+            f.FEATURE_TITLE,
+            f.FEATURE_CONTENTS
+        FROM
+            PRD_FEATURE pf
+                LEFT JOIN FEATURE f ON pf.FEATURE_CODE = f.FEATURE_CODE
+        WHERE
+            pf.PRD_CODE = #{prdCode}
+            AND pf.USE_YN = 'Y'
+    </select>
+
+    <select id="getRelatedProducts" resultMap="ProductInfoMap" parameterType="java.lang.String">
+        SELECT
+            p.PRD_CODE,
+            p.PRD_NAME,
+            p.PRICE,
+            p.PRD_IMG,
+            v.VENDOR_NAME
+        FROM
+            PRD_INFO p
+        LEFT JOIN VENDOR_INFO v ON p.VENDOR_CODE = v.VENDOR_CODE
+        WHERE p.PRD_CODE IN (
+            'P10101', 'P10102', 'P10103', 'P10104', 'P10105',
+            'P10201', 'P10202', 'P10203', 'P10204', 'P10205',
+            'P10301', 'P10302', 'P10303', 'P10304', 'P10305',
+            'P10401', 'P10402', 'P10403', 'P10404', 'P10405'
+        )
+        AND p.PRD_CODE != #{prdCode}
+    </select>
+
+    <select id="getRecommendedProducts" resultMap="ProductInfoMap">
+        SELECT
+            p.PRD_CODE,
+            p.PRD_NAME,
+            p.PRICE,
+            p.PRD_IMG,
+            v.VENDOR_NAME
+        FROM
+            PRD_INFO p
+                LEFT JOIN VENDOR_INFO v ON p.VENDOR_CODE = v.VENDOR_CODE
+        WHERE p.PRD_CODE IN (
+                             'P90101', 'P90102', 'P90103', 'P90104', 'P90105',
+                             'P90201', 'P90202', 'P90203', 'P90204', 'P90205',
+                             'P90301', 'P90302', 'P90303', 'P90304', 'P90305',
+                             'P90401', 'P90402', 'P90403', 'P90404', 'P90405',
+                             'P90501', 'P90502', 'P90503', 'P90504', 'P90505',
+                             'P90601', 'P90602', 'P90603', 'P90604', 'P90605',
+                             'P90701', 'P90702', 'P90703', 'P90704', 'P90705',
+                             'P90801', 'P90802', 'P90803', 'P90804', 'P90805',
+                             'P90901', 'P90902', 'P90903', 'P90904', 'P90905'
+        )
+        ORDER BY
+        CASE p.PRD_CODE
+            WHEN 'P90101' THEN 1  WHEN 'P90102' THEN 2  WHEN 'P90103' THEN 3  WHEN 'P90104' THEN 4  WHEN 'P90105' THEN 5
+            WHEN 'P90201' THEN 6  WHEN 'P90202' THEN 7  WHEN 'P90203' THEN 8  WHEN 'P90204' THEN 9  WHEN 'P90205' THEN 10
+            WHEN 'P90301' THEN 11 WHEN 'P90302' THEN 12 WHEN 'P90303' THEN 13 WHEN 'P90304' THEN 14 WHEN 'P90305' THEN 15
+            WHEN 'P90401' THEN 16 WHEN 'P90402' THEN 17 WHEN 'P90403' THEN 18 WHEN 'P90404' THEN 19 WHEN 'P90405' THEN 20
+            WHEN 'P90501' THEN 21 WHEN 'P90502' THEN 22 WHEN 'P90503' THEN 23 WHEN 'P90504' THEN 24 WHEN 'P90505' THEN 25
+            WHEN 'P90601' THEN 26 WHEN 'P90602' THEN 27 WHEN 'P90603' THEN 28 WHEN 'P90604' THEN 29 WHEN 'P90605' THEN 30
+            WHEN 'P90701' THEN 31 WHEN 'P90702' THEN 32 WHEN 'P90703' THEN 33 WHEN 'P90704' THEN 34 WHEN 'P90705' THEN 35
+            WHEN 'P90801' THEN 36 WHEN 'P90802' THEN 37 WHEN 'P90803' THEN 38 WHEN 'P90804' THEN 39 WHEN 'P90805' THEN 40
+            WHEN 'P90901' THEN 41 WHEN 'P90902' THEN 42 WHEN 'P90903' THEN 43 WHEN 'P90904' THEN 44 WHEN 'P90905' THEN 45
+            ELSE 99
+        END
+    </select>
+
+    <insert id="addToCart" parameterType="map">
+        INSERT INTO CART_INFO (
+            CART_ID,
+            USER_ID,
+            PRD_CODE,
+            QUANTITY,
+            ADDED_DATE
+        ) VALUES (
+            #{cartId},
+            #{userId},
+            #{prdCode},
+            #{quantity},
+            SYSDATE
+        )
+    </insert>
+</mapper>
